@@ -6,6 +6,7 @@ import type { User } from 'next-auth';
 import { signOut, useSession } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,53 +61,78 @@ export function SidebarUserNav({ user }: { user: User }) {
                   className="rounded-full"
                 />
                 <span data-testid="user-email" className="truncate">
-                  {isGuest ? 'Guest' : user?.email}
+                  {isGuest ? 'Hey, User' : user?.email}
                 </span>
                 <ChevronUp className="ml-auto" />
               </SidebarMenuButton>
             )}
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            data-testid="user-nav-menu"
-            side="top"
-            className="w-[--radix-popper-anchor-width]"
-          >
-            <DropdownMenuItem
-              data-testid="user-nav-item-theme"
-              className="cursor-pointer"
-              onSelect={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-            >
-              {`Toggle ${resolvedTheme === 'light' ? 'dark' : 'light'} mode`}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild data-testid="user-nav-item-auth">
-              <button
-                type="button"
-                className="w-full cursor-pointer"
-                onClick={() => {
-                  if (status === 'loading') {
-                    toast({
-                      type: 'error',
-                      description:
-                        'Checking authentication status, please try again!',
-                    });
+  data-testid="user-nav-menu"
+  side="top"
+  className="w-[--radix-popper-anchor-width]"
+>
 
-                    return;
-                  }
+  {/* I have added a new item here to ensure the dropdown menu has enough width */}
 
-                  if (isGuest) {
-                    router.push('/login');
-                  } else {
-                    signOut({
-                      redirectTo: '/',
-                    });
-                  }
-                }}
-              >
-                {isGuest ? 'Login to your account' : 'Sign out'}
-              </button>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
+
+  <DropdownMenuItem
+    className="cursor-pointer"
+    onSelect={() => router.push('/settings')}
+    data-testid="user-nav-item-settings"
+  >
+    Settings
+  </DropdownMenuItem>
+
+    <DropdownMenuSeparator />
+
+  <DropdownMenuItem
+    className="cursor-pointer"
+    onSelect={() => router.push('/dashboard')}
+    data-testid="user-nav-item-dashboard"
+  >
+    Dashboard
+  </DropdownMenuItem>
+
+  <DropdownMenuSeparator />
+
+  <DropdownMenuItem
+    data-testid="user-nav-item-theme"
+    className="cursor-pointer"
+    onSelect={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+  >
+    {`Toggle ${resolvedTheme === 'light' ? 'dark' : 'light'} mode`}
+  </DropdownMenuItem>
+
+  <DropdownMenuSeparator />
+
+  <DropdownMenuItem asChild data-testid="user-nav-item-auth">
+    <button
+      type="button"
+      className="w-full cursor-pointer"
+      onClick={() => {
+        if (status === 'loading') {
+          toast({
+            type: 'error',
+            description:
+              'Checking authentication status, please try again!',
+          });
+          return;
+        }
+
+        if (isGuest) {
+          router.push('/login');
+        } else {
+          signOut({
+            redirectTo: '/',
+          });
+        }
+      }}
+    >
+      {isGuest ? 'Login to your account' : 'Sign out'}
+    </button>
+  </DropdownMenuItem>
+</DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
